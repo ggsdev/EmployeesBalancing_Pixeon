@@ -1,0 +1,1 @@
+﻿*** This .csv files are just for illustration purposes, the real data is inside the project folder Pixeon/bin/Debug/net6.0/Data ***
