@@ -1,4 +1,4 @@
-# employeesBalancing
+# EmployeesBalancing_Pixeon
 
 -   O arquivo .csv com os dados de funcionários e times, está em: "Pixeon/bin/Debug/net6.0/Data"
 -   Similarmente para os testes o caminho é: "Pixeon.Tests/bin/Debug/net6.0/Data"
@@ -22,11 +22,10 @@ A funcionalidade Balance tem como objetivo balancear os funcionários entre os c
 Para utilizar essa funcionalidade, basta pressionar a tecla "4".
 
 << Como Utilizar >>
-0 - Abra o executável console;
-1 - Para carregar os arquivos .txt, pressione a tecla "1";
-2 - Para alocar os funcionários, pressione a tecla "2";
-3 - Para promover funcionários, pressione a tecla "3";
-3.1 - Digite a quantidade de funcionários que devem ser promovidos;
-4 - Para balancear os funcionários entre os times, pressione a tecla "4";
+0 - Abra o executável console;<br>
+1 - Para carregar os arquivos .txt, pressione a tecla "1";<br>
+2 - Para alocar os funcionários, pressione a tecla "2";<br>
+3 - Para promover funcionários, pressione a tecla "3";<br>
+3.1 - Digite a quantidade de funcionários que devem ser promovidos;<br>
+4 - Para balancear os funcionários entre os times, pressione a tecla "4";<br>
 5 - Para sair do programa, pressione a tecla "q" a qualquer momento.
-# EmployeesBalancing_Pixeon
