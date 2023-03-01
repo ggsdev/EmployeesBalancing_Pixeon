@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Pixeon.Classes;
+﻿using Pixeon.Classes;
 
 
 bool isInsideProgram = true;
@@ -71,8 +70,13 @@ while (isInsideProgram && !hasExitedProgram)
             if (int.TryParse(inputEmployeesToBePromoted, out countOfEmployeesToBePromoted))
             {
                 List<Employee> promotedEmployees = Company.Promote(countOfEmployeesToBePromoted, currentYear);
-                currentYear += 1;
-                if (countOfEmployeesToBePromoted > promotedEmployees.Count) Console.WriteLine($"\nYou tryied to promote {countOfEmployeesToBePromoted} but only {promotedEmployees.Count} could be promoted.");
+
+                if(promotedEmployees.Count > 0) currentYear += 1;
+
+                if (countOfEmployeesToBePromoted > promotedEmployees.Count) 
+                {
+                    Console.WriteLine($"\nYou tryied to promote {countOfEmployeesToBePromoted} but only {promotedEmployees.Count} could be promoted.");
+                }
                 break;
             }
 
