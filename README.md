@@ -1,7 +1,8 @@
 # EmployeesBalancing_Pixeon
 
--   O arquivo .csv com os dados de funcionários e times, está em: "Pixeon/bin/Debug/net6.0/Data"
--   Similarmente para os testes o caminho é: "Pixeon.Tests/bin/Debug/net6.0/Data"
+-   O arquivo .csv com os dados de funcionários e times, deverá estar em junto com o executável em uma pasta chamada Data*
+-   Similarmente para os testes o arquivo .csv deverá estar em junto com o executável em uma pasta chamada Data*
+-   Só copiar a pasta Data dentro do projeto e colocar junto ao executável*
 
 Funcionalidades:
 
