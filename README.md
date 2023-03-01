@@ -21,7 +21,7 @@ BALANCE
 A funcionalidade Balance tem como objetivo balancear os funcionários entre os clientes de uma maneira mais eficiente.
 Para utilizar essa funcionalidade, basta pressionar a tecla "4".
 
-<< Como Utilizar >>
+<< Como Utilizar >> <br>
 0 - Abra o executável console;<br>
 1 - Para carregar os arquivos .txt, pressione a tecla "1";<br>
 2 - Para alocar os funcionários, pressione a tecla "2";<br>
