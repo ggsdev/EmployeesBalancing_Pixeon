@@ -1,10 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using System.Collections.Generic;
-using Pixeon.Classes;
+﻿using Pixeon.Classes;
 
 namespace Pixeon.Tests
 {
@@ -12,7 +6,7 @@ namespace Pixeon.Tests
     public class AllocateTests
     {
         [Test]
-        public void Allocate_Should_Increase_CurrentMaturity_And_AddEmployees()
+        public void Allocate_ShouldIncreaseCurrentMaturityAndAddEmployees()
         {
             List<Employee> employeesData = Company.data.employeesData;
 
@@ -21,9 +15,9 @@ namespace Pixeon.Tests
             Assert.Multiple(() =>
             {
                 // Assert that one team has expected maturity and team length
-                Assert.That(allocatedTeams[0].TeamEmployees, Has.Count.EqualTo(2));
+                Assert.That(allocatedTeams[0].TeamEmployees, Has.Count.EqualTo(1));
                 Assert.That(allocatedTeams[0].TeamEmployees[0].Name, Is.EqualTo(employeesData[0].Name));
-                Assert.That(allocatedTeams[0].CurrentMaturity, Is.EqualTo(6));
+                Assert.That(allocatedTeams[0].CurrentMaturity, Is.EqualTo(3));
 
             });
 

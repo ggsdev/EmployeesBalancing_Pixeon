@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Xml.Linq;
-using NUnit.Framework;
-using Pixeon.Classes;
+﻿using Pixeon.Classes;
 
 namespace Pixeon.Tests
 {
@@ -16,7 +13,7 @@ namespace Pixeon.Tests
             int numberOfPromotedEmployees = 1;
 
             List<Employee> promotedEmployees = Company.Promote(numberOfPromotedEmployees, currentYear);
-
+                
             //Assert that number of promoted employees given through parameter was respected
             Assert.That(promotedEmployees, Has.Count.EqualTo(numberOfPromotedEmployees));
         }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using System.Collections.Generic;
-using Pixeon.Classes;
+﻿using Pixeon.Classes;
 
 namespace Pixeon.Tests
 {
@@ -12,7 +6,7 @@ namespace Pixeon.Tests
     public class LoadTests
     {
         [Test]
-        public void Load_Should_Return_Correct_Data()
+        public void Load_ShouldReturnCorrectData()
         {
             string pathToTeamsData = "Data/teams.csv";
             string pathToEmployeesData = "Data/employees.csv";
