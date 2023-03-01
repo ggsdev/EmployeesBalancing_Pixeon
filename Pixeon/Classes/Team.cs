@@ -1,10 +1,4 @@
 ﻿using Pixeon.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace Pixeon.Classes
 {
@@ -14,13 +8,18 @@ namespace Pixeon.Classes
         public int MinMaturity { get; set; }
         public int CurrentMaturity { get; set; }
         public List<Employee> TeamEmployees { get; set; } = new();
+        public int ExtraMaturity { get; set; }   
 
-        public int GetExtraMaturityPoints()
-        { return CurrentMaturity - MinMaturity; }
         public Team(string name, int minMaturity)
         {
             Name = name;
             MinMaturity = minMaturity;
+            ExtraMaturity = GetExtraMaturityPoints(CurrentMaturity, MinMaturity);
+        }
+
+        static int GetExtraMaturityPoints(int currentMaturity, int minMaturity)
+        { 
+            return currentMaturity - minMaturity; 
         }
     } 
 }
