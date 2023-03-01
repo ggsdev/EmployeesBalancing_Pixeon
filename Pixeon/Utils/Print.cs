@@ -1,11 +1,4 @@
 ﻿using Pixeon.Classes;
-using Pixeon.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pixeon.Utils
 {
@@ -24,7 +17,7 @@ namespace Pixeon.Utils
 
                     foreach(Team team in teams)
                     {
-                        Console.WriteLine($"{team.Name} - Min. Maturity {team.MinMaturity} - Current Maturity {team.CurrentMaturity}");
+                        Console.WriteLine($"{team.Name} - Min. Maturity {team.MinMaturity} - Current Maturity {team.TeamEmployees.Sum((emp) => emp.PLevel)}");
                         foreach (Employee employee in team.TeamEmployees)
                         {
                             Console.WriteLine($"{employee.Name} - {employee.PLevel}");
