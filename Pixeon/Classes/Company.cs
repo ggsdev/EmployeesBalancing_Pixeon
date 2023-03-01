@@ -4,7 +4,7 @@ namespace Pixeon.Classes
 {
     public static class Company
     {
-        private static (List<Team> teamsData, List<Employee> employeesData) loadedData;
+        private static (List<Team> teamsData, List<Employee> employeesData) loadedData = new();
         public static (List<Team> teamsData, List<Employee> employeesData) data = Load(); //public because i have to access for testing(probably better way to do it), should be private
 
         public static (List<Team>, List<Employee>) Load()
@@ -15,32 +15,44 @@ namespace Pixeon.Classes
             string pathToEmployeesData = "Data/employees.csv";
 
             List<Team> teams = new();
-            using (StreamReader reader = new(pathToTeamsData))
-            {
-                string? line ;
-                while ((line = reader.ReadLine()) != null) //maybe implement ReadLineAsync(??) in order to read both files at the same time
-                {
-                    string[] info = line.Split(',');
-                    Team team = new(info[0], int.Parse(info[1]));
-                    teams.Add(team);
-                }
-            }
-
             List<Employee> employees = new();
-            using (StreamReader reader = new(pathToEmployeesData))
+
+            try
             {
-                string? line;
-                while ((line = reader.ReadLine()) != null)
+                using (StreamReader readerEmployees = new(pathToEmployeesData))
                 {
-                    string[] info = line.Split(',');
-                    Employee employee = new(info[0], byte.Parse(info[1]), int.Parse(info[2]), int.Parse(info[3]), int.Parse(info[4]));
-                    employees.Add(employee);
+                    string? line;
+                    while ((line = readerEmployees.ReadLine()) != null)
+                    {
+                        string[] info = line.Split(',');
+                        Employee employee = new(info[0], byte.Parse(info[1]), int.Parse(info[2]), int.Parse(info[3]), int.Parse(info[4]));
+                        employees.Add(employee);
+                    }
+                }
+
+                using StreamReader readerTeams = new(pathToTeamsData);
+                {
+                    string? line;
+                    while ((line = readerTeams.ReadLine()) != null) //maybe implement ReadLineAsync(??) in order to read both files at the same time
+                    {
+                        string[] info = line.Split(',');
+                        Team team = new(info[0], int.Parse(info[1]));
+                        teams.Add(team);
+                    }
                 }
             }
-            loadedData = (teams, employees);
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine($"File(s) weren't found.");
+            }
 
-            Print.ShowInConsole("load");
-            return (teams, employees);
+            if (teams.Count > 0 && employees.Count > 0) { 
+                loadedData = (teams, employees);
+                Print.ShowInConsole("load");
+                return (teams, employees);
+            }
+
+            throw new Exception("Internal error");
         }
         public static List<Team> Allocate()
         {
