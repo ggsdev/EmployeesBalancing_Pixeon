@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pixeon.Utils;
-using NUnit.Framework.Interfaces;
-using System.Runtime.InteropServices;
-using System.Diagnostics.Metrics;
+﻿using Pixeon.Utils;
 
 namespace Pixeon.Classes
 {
     public static class Company
     {
         private static (List<Team> teamsData, List<Employee> employeesData) loadedData;
-        public static readonly (List<Team> teamsData, List<Employee> employeesData) data = Load();
+        public static (List<Team> teamsData, List<Employee> employeesData) data = Load(); //public because i have to access for testing(probably better way to do it), should be private
 
         public static (List<Team>, List<Employee>) Load()
         {
@@ -27,7 +18,7 @@ namespace Pixeon.Classes
             using (StreamReader reader = new(pathToTeamsData))
             {
                 string? line ;
-                while ((line = reader.ReadLine()) != null)
+                while ((line = reader.ReadLine()) != null) //maybe implement ReadLineAsync(??) in order to read both files at the same time
                 {
                     string[] info = line.Split(',');
                     Team team = new(info[0], int.Parse(info[1]));
@@ -39,7 +30,7 @@ namespace Pixeon.Classes
             using (StreamReader reader = new(pathToEmployeesData))
             {
                 string? line;
-                while ((line = reader.ReadLine())!= null)
+                while ((line = reader.ReadLine()) != null)
                 {
                     string[] info = line.Split(',');
                     Employee employee = new(info[0], byte.Parse(info[1]), int.Parse(info[2]), int.Parse(info[3]), int.Parse(info[4]));
@@ -53,20 +44,19 @@ namespace Pixeon.Classes
         }
         public static List<Team> Allocate()
         {
-            int indexEmployee = 0;
-            int employeesToAllocate = data.employeesData.Count;
+            (List<Team> teams, List<Employee> employees) = data;
 
-            List<Team> teams = data.teamsData;
-            List<Employee> employees = data.employeesData;
+            int employeesToAllocate = employees.Count;
+            int indexEmployee = 0;
 
             List<Team> outputData = new();
 
-            foreach (Team team in teams)
+            for (int i = 0; i < teams.Count; i++)
             {
-                while (team.MinMaturity > team.CurrentMaturity)
-                {
-                    if (employeesToAllocate == 0) break;
+                Team team = teams[i];
 
+                while (team.MinMaturity > team.CurrentMaturity || employeesToAllocate > 0 && i >= teams.Count - 1)
+                {
                     Employee employee = employees[indexEmployee];
 
                     team.TeamEmployees.Add(employee);
@@ -78,22 +68,6 @@ namespace Pixeon.Classes
 
                 outputData.Add(team);
             }
- 
-            while (employeesToAllocate > 0)
-            {
-                foreach (Team team in teams)
-                {
-                    if (employeesToAllocate == 0) break;
-
-                    Employee employee = employees[indexEmployee];
-
-                    team.TeamEmployees.Add(employee);
-                    team.CurrentMaturity += employee.PLevel;
-
-                    indexEmployee++;
-                    employeesToAllocate--;
-                }
-            }
 
             Print.ShowInConsole("allocate", teams: outputData);
             return outputData;
@@ -101,77 +75,73 @@ namespace Pixeon.Classes
 
         public static List<Employee> Promote(int countOfEmployeesToBePromoted, int currentYear)
         {
-            List<Employee> employees = data.employeesData;
-            List<Team> teams = data.teamsData;
-            List<Employee> toBePromotedList = new();
+            (List<Team> teams, List<Employee> employees) = data;
 
             List<Employee> employeesOrderedByScore = employees.OrderByDescending(employee => employee.TotalScoreForPromotion).ToList();
-            
-                foreach(Employee employee in employeesOrderedByScore)
+
+            List<Employee> outputDataWithPromoted = new();
+
+            foreach (Employee employee in employeesOrderedByScore)
+            {
+                if (countOfEmployeesToBePromoted == 0) break;
+
+                int timeWithoutProgression = currentYear - employee.LastProgressionYear;
+                int companyTime = currentYear - employee.AdmissionYear;
+
+                if (companyTime >= 1 && (employee.PLevel < 4 || (employee.PLevel == 4 && timeWithoutProgression > 2)))
                 {
-                    int timeWithoutProgression = currentYear - employee.LastProgressionYear;
-                    int companyTime = currentYear - employee.AdmissionYear;
+                    employee.PLevel += 1;
+                    employee.LastProgressionYear = currentYear;
+                    outputDataWithPromoted.Add(employee);
 
-                    if (countOfEmployeesToBePromoted == 0) break;
+                    int j = employees.FindIndex(emp => emp == employee);
+                    employees[j].PLevel = employee.PLevel;
+                    employees[j].LastProgressionYear = employee.LastProgressionYear;
 
-                    if (companyTime >= 1 && employee.PLevel < 4 || employee.PLevel == 4 && timeWithoutProgression >= 2)
-                    {
-                        employee.PLevel += 1;
-                        employee.LastProgressionYear = currentYear;
-                        toBePromotedList.Add(employee);
-    
-                        countOfEmployeesToBePromoted--;     
+                    countOfEmployeesToBePromoted--;
 
-                        Print.ShowInConsole("promote", employee);
-                    }
+                    Print.ShowInConsole("promote", employee);
                 }
+            }
 
-                foreach (Team team in teams)
-                    team.CurrentMaturity = team.TeamEmployees.Sum(emp => emp.PLevel);
-
-            return toBePromotedList;
+            data.employeesData = employees; //updates the data with the PLevel after promotion (probably better way to do it)
+            return outputDataWithPromoted;
         }
 
         public static void Balance()
         {
-            Console.WriteLine("\"BALANCE\" STILL IN DEVELOPMENT.\n");
+            (List<Team> teams, List<Employee> employees) = data;
 
-            List<Employee> employees = data.employeesData;
-            List<Team> teams = data.teamsData;
+            List<Team> sortedTeams = teams.OrderBy(team => team.ExtraMaturity).ToList();
 
-            int highestExtraMaturity = teams.Max(team => team.TeamEmployees.Sum(emp => emp.PLevel) - team.MinMaturity);
-            int lowestExtraMaturity = teams.Min(team => team.TeamEmployees.Sum(emp => emp.PLevel) - team.MinMaturity);
-
-
-            List<Team> sortedTeams = teams.OrderByDescending((team) => team.MinMaturity - team.CurrentMaturity).ToList();
-
-            int difference = highestExtraMaturity - lowestExtraMaturity;
-
-            //fila de prioridades TeamEmployees, sortear funcionarios antes com base no PLevel, algoritimo: Knapsack (algoritimo do guloso), problema da mochila**
-            for (int i = 0; i < teams.Count; i++)
+            byte timesBalancing = 255;
+            while (timesBalancing != 0) // not optimal way of doing it
             {
+                int highestExtraMaturity = sortedTeams.Last().ExtraMaturity;
+                int lowestExtraMaturity = sortedTeams.First().ExtraMaturity;
 
-                List<Employee> sortedEmployees = teams[i].TeamEmployees.OrderByDescending(emp => emp.PLevel).ToList();
+                int differenceOfMaturity = highestExtraMaturity - lowestExtraMaturity;
 
-                highestExtraMaturity = teams.Max(team => team.TeamEmployees.Sum(emp => emp.PLevel) - team.MinMaturity);
-                lowestExtraMaturity = teams.Min(team => team.TeamEmployees.Sum(emp => emp.PLevel) - team.MinMaturity);
+                if (differenceOfMaturity <= 0) break;
 
-                int differenceAfter = highestExtraMaturity - lowestExtraMaturity;
+                Team fromTeam = sortedTeams.Last();
+                Team toTeam = sortedTeams.First();
+                Employee transferedEmployee = fromTeam.TeamEmployees.OrderBy(employee => employee.PLevel).First();
 
+                fromTeam.TeamEmployees.Remove(transferedEmployee);
+                toTeam.TeamEmployees.Add(transferedEmployee);
 
+                fromTeam.ExtraMaturity = fromTeam.TeamEmployees.Sum(employee => employee.PLevel) - fromTeam.MinMaturity;
+                toTeam.ExtraMaturity = toTeam.TeamEmployees.Sum(employee => employee.PLevel) - toTeam.MinMaturity;
 
-                Employee transferedEmployee = teams[i].TeamEmployees[0];
+                sortedTeams = teams.OrderBy(team => team.ExtraMaturity).ToList();
 
-                teams[i + 1].TeamEmployees.Add(transferedEmployee);
-                teams[i].TeamEmployees.RemoveAt(0); //removing transfered employee   
-
-                teams[i].CurrentMaturity = teams[i].TeamEmployees.Sum(emp => emp.PLevel);
-
-                if (i + 1 >= teams.Count - 1) break;
-                teams[i + 1].CurrentMaturity = teams[i + 1].TeamEmployees.Sum(emp => emp.PLevel);
+                timesBalancing--;
             }
 
-            Print.ShowInConsole("balance", teams: teams);
+            sortedTeams.Sort((x, y) => x.Name.CompareTo(y.Name)); //resorting ordering by Client name
+
+            Print.ShowInConsole("balance", teams: sortedTeams);
         }
     }
 }
