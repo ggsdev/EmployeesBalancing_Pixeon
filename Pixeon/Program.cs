@@ -25,8 +25,8 @@ while (isInsideProgram)
                 Console.WriteLine("You already loaded data, PRESS \"2\" to allocate employees.");
                 break;
             }
-            Company.Load();
-            hasLoadedData = true;
+            (List<Team>, List<Employee>) data = Company.Load();
+            if(data.Item1.Count != 0 && data.Item2.Count != 0 ) hasLoadedData = true;
             break;
         case "2":
             if (hasLoadedData)
@@ -50,8 +50,8 @@ while (isInsideProgram && !hasExitedProgram)
 {
     Console.WriteLine("\n< PRESS [ 3 ]PROMOTE || [ 4 ]BALANCE || [ Q ]EXIT >\n");
 
-    string? input = Console.ReadKey(intercept: true).KeyChar.ToString();
-    if (input?.ToLower() == "q") break;
+    string input = Console.ReadKey(intercept: true).KeyChar.ToString();
+    if (input.ToLower() == "q") break;
 
     switch (input)
     {
