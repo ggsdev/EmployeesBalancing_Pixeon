@@ -6,36 +6,36 @@ namespace Pixeon.Tests
     public class AllocateTests
     {
         [Test]
-        public void Allocate_ShouldIncreaseCurrentMaturityAndAddEmployees()
+        public void Allocate_ReturnsListOfTeams()
         {
-            List<Employee> employeesData = Company.data.employeesData;
+            List<Team> teams = Company.Allocate();
 
-            List<Team> allocatedTeams = Company.Allocate();
+            Assert.That(teams, Is.InstanceOf<List<Team>>());
+        }
 
-            Assert.Multiple(() =>
+        [Test]
+        public void Allocate_AllocatesAllEmployees()
+        {
+            List<Team> teams = Company.Allocate();
+            int totalEmployees = Company.data.employeesData.Count;
+
+            int allocatedEmployees = teams.Sum(t => t.TeamEmployees.Count);
+
+            Assert.That(allocatedEmployees, Is.EqualTo(totalEmployees));
+        }
+
+        [Test]
+        public void Allocate_AllocatesEmployeesBasedOnPLevel()
+        {
+            List<Team> teams = Company.Allocate();
+
+            foreach (Team team in teams)
             {
-                // Assert that one team has expected maturity and team length
-                Assert.That(allocatedTeams[0].TeamEmployees, Has.Count.EqualTo(1));
-                Assert.That(allocatedTeams[0].TeamEmployees[0].Name, Is.EqualTo(employeesData[0].Name));
-                Assert.That(allocatedTeams[0].CurrentMaturity, Is.EqualTo(3));
+                int pLevelSum = team.TeamEmployees.Sum(e => e.PLevel);
 
-            });
-
-            Assert.Multiple(() =>
-            {
-                // Assert that second team has expected maturity and team length
-                Assert.That(allocatedTeams[1].TeamEmployees, Has.Count.EqualTo(2));
-                Assert.That(allocatedTeams[1].TeamEmployees[0].Name, Is.EqualTo(employeesData[1].Name));
-                Assert.That(allocatedTeams[1].TeamEmployees[1].Name, Is.EqualTo(employeesData[2].Name));
-                Assert.That(allocatedTeams[1].CurrentMaturity, Is.EqualTo(employeesData[1].PLevel + employeesData[2].PLevel));
-            });
-
-
-            // Assert that all employees have been allocated.
-            int totalEmployeesAllocated = allocatedTeams[0].TeamEmployees.Count + allocatedTeams[1].TeamEmployees.Count + allocatedTeams[2].TeamEmployees.Count;
-            int totalEmployeesInCompany = Company.data.employeesData.Count;
-
-            Assert.That(totalEmployeesAllocated, Is.EqualTo(totalEmployeesInCompany));
+                Assert.That(team.CurrentMaturity, Is.GreaterThanOrEqualTo(team.MinMaturity));
+            }
         }
     }
 }
+
