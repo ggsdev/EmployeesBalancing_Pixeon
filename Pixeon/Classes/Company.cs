@@ -102,7 +102,7 @@ namespace Pixeon.Classes
 
                 if (companyTime >= 1 && (employee.PLevel < 4 || (employee.PLevel == 4 && timeWithoutProgression > 2)))
                 {
-                    employee.PLevel += 1;
+                    employee.PLevel++;
                     employee.LastProgressionYear = currentYear;
                     outputDataWithPromoted.Add(employee);
 
