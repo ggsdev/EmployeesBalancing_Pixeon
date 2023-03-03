@@ -5,7 +5,7 @@ namespace Pixeon.Classes
     public class Team : ITeam
     {
         public string Name { get; private set; }
-        public int MinMaturity { get; set; }
+        public int MinMaturity { get; private set; }
         public int CurrentMaturity { get; set; }
         public List<Employee> TeamEmployees { get; set; } = new();
         public int ExtraMaturity { get; set; }   
@@ -17,7 +17,7 @@ namespace Pixeon.Classes
             ExtraMaturity = GetExtraMaturityPoints(CurrentMaturity, MinMaturity);
         }
 
-        static int GetExtraMaturityPoints(int currentMaturity, int minMaturity)
+        public static int GetExtraMaturityPoints(int currentMaturity, int minMaturity)
         { 
             return currentMaturity - minMaturity; 
         }
