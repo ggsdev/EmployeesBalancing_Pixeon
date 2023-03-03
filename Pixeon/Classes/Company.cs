@@ -126,8 +126,10 @@ namespace Pixeon.Classes
 
             List<Team> sortedTeams = teams.OrderBy(team => team.ExtraMaturity).ToList();
 
-            byte timesBalancing = 255;
-            while (timesBalancing != 0) // not optimal way of doing it
+            int totalOfEmployeesAllocated = teams.Sum(team => team.TeamEmployees.Count);
+            int timesBalancing = totalOfEmployeesAllocated * teams.Count; // trying to reach an optimal amount of loops;
+
+            while (timesBalancing > 0) // not optimal way of doing it
             {
                 int highestExtraMaturity = sortedTeams.Last().ExtraMaturity;
                 int lowestExtraMaturity = sortedTeams.First().ExtraMaturity;
@@ -152,6 +154,44 @@ namespace Pixeon.Classes
             }
 
             sortedTeams.Sort((x, y) => x.Name.CompareTo(y.Name)); //resorting ordering by Client name
+
+            Print.ShowInConsole("balance", teams: sortedTeams);
+        }
+
+        public static void BalanceGreedy()
+        {
+            //greedy algoritmn approach
+            (List < Team > teams, List < Employee > employees) = data;
+
+            List<Employee> availableEmployees = employees.ToList();
+
+            foreach (Team team in teams)
+            {
+                while (team.ExtraMaturity > 0)
+                {
+                    Employee bestEmployee = null;
+                    int bestMaturityDifference = int.MaxValue;
+
+                    foreach (Employee employee in availableEmployees)
+                    {
+                        int maturityDifference = Math.Abs(team.ExtraMaturity + employee.PLevel - team.MinMaturity);
+
+                        if (maturityDifference < bestMaturityDifference)
+                        {
+                            bestEmployee = employee;
+                            bestMaturityDifference = maturityDifference;
+                        }
+                    }
+
+                    if (bestEmployee == null) break;
+
+                    team.TeamEmployees.Add(bestEmployee);
+                    team.ExtraMaturity += bestEmployee.PLevel;
+                    availableEmployees.Remove(bestEmployee);
+                }
+            }
+
+            List<Team> sortedTeams = teams.OrderBy(team => team.Name).ToList();
 
             Print.ShowInConsole("balance", teams: sortedTeams);
         }
